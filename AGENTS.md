@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A headless accounting engine with a dual-entry ledger, designed to run end-to-end from a CLI interface. Core architecture uses a relational database with fact and dimension tables, designed to scale to a full ERP.
+A headless accounting engine with a dual-entry ledger, designed to run end-to-end from a CLI interface. Core architecture uses a relational database with fact and dimension tables.
 
 ## Build/Lint/Test Commands
 
