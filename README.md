@@ -4,6 +4,12 @@ CLI-first headless accounting engine with dual-entry ledger rules and Supabase-m
 
 ## CLI Usage
 
+Start the local edge function in one terminal:
+
+```bash
+npm run service:dev
+```
+
 Human-readable:
 
 ```bash

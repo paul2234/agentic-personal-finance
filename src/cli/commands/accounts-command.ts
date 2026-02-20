@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 
-import { AccountRepository } from '../../db/repositories/account-repository';
+import { ServiceClient } from '../client/service-client';
 import { printData, printError } from '../output/format';
 
 interface AccountListOptions {
@@ -18,8 +18,8 @@ export function createAccountsCommand(): Command {
       const jsonOutput: boolean = Boolean(options.json);
 
       try {
-        const accountRepository = new AccountRepository();
-        const accounts = await accountRepository.listAccounts();
+        const serviceClient = new ServiceClient();
+        const accounts = await serviceClient.listAccounts();
         printData(accounts, jsonOutput);
       } catch (error) {
         printError(error, jsonOutput);

@@ -1,0 +1,56 @@
+import type { AccountListItem } from '../../types/accounting';
+import type { ApiResponse } from '../../types/api';
+
+const DEFAULT_SERVICE_URL = 'http://127.0.0.1:54321/functions/v1';
+
+export class ServiceClient {
+  private readonly baseUrl: string;
+
+  private readonly bearerToken?: string;
+
+  public constructor(baseUrl?: string, bearerToken?: string) {
+    this.baseUrl = baseUrl ?? process.env.ACCOUNTING_SERVICE_URL ?? DEFAULT_SERVICE_URL;
+    this.bearerToken = bearerToken ?? process.env.ACCOUNTING_SERVICE_TOKEN;
+  }
+
+  public async listAccounts(): Promise<AccountListItem[]> {
+    const response = await fetch(`${this.baseUrl}/get-accounts`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    const payload = await this.readJsonResponse<ApiResponse<AccountListItem[]>>(response);
+    if (!payload.success) {
+      throw new Error(payload.error.message);
+    }
+
+    return payload.data;
+  }
+
+  private async readJsonResponse<T>(response: Response): Promise<T> {
+    const bodyText: string = await response.text();
+
+    try {
+      return JSON.parse(bodyText) as T;
+    } catch {
+      if (!response.ok) {
+        throw new Error(`Service request failed with status ${response.status}.`);
+      }
+
+      throw new Error('Service response was not valid JSON.');
+    }
+  }
+
+  private getHeaders(): HeadersInit {
+    if (!this.bearerToken) {
+      return {
+        'Content-Type': 'application/json',
+      };
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.bearerToken}`,
+    };
+  }
+}
