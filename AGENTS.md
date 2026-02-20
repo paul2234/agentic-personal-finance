@@ -214,6 +214,15 @@ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 created_by UUID REFERENCES users(id),
 ```
 
+### Database Migration Workflow (Supabase)
+
+- Treat SQL migrations as the source of truth; do not rely on one-off dashboard edits
+- Create a new migration file with `supabase migration new <name>`
+- Author explicit SQL in the generated migration file (tables, constraints, indexes, RLS/policies)
+- Apply pending migrations with `supabase db push`
+- Commit migration files so schema changes are reproducible across environments
+- Use `supabase db diff -f <name>` only when you intentionally want to generate SQL from local DB drift/prototyping
+
 ### API Design
 
 - Use REST conventions with versioned endpoints (`/api/v1/...`)

@@ -1,0 +1,78 @@
+# Agentic Accounting
+
+CLI-first headless accounting engine with dual-entry ledger rules and Supabase-managed schema migrations.
+
+## CLI Usage
+
+Human-readable:
+
+```bash
+npm run dev -- accounts list
+```
+
+Machine-readable:
+
+```bash
+npm run dev -- accounts list --json
+```
+
+Post a journal entry from file:
+
+```bash
+npm run dev -- ledger post-entry --file ./examples/journal-entry.json
+```
+
+## Example Journal Payload
+
+```json
+{
+  "entryDate": "2026-02-20",
+  "memo": "Initial sale",
+  "lines": [
+    { "accountCode": "1000", "type": "DEBIT", "amount": "100.00" },
+    { "accountCode": "4000", "type": "CREDIT", "amount": "100.00" }
+  ]
+}
+```
+
+## Quality Checks
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+```
+
+## Local Development Setup
+
+### Prerequisites
+
+- Node.js 20+
+- Docker (for local Supabase stack)
+- Supabase CLI
+
+### Setup Steps
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start local Supabase stack:
+
+```bash
+supabase start
+```
+
+3. Copy environment variables:
+
+```bash
+cp .env.example .env
+```
+
+4. Apply migrations:
+
+```bash
+npm run db:migrate
+```

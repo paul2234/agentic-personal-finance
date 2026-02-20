@@ -1,0 +1,18 @@
+{
+  "entryDate": "2026-02-20",
+  "memo": "Sample balanced entry",
+  "lines": [
+    {
+      "accountCode": "1000",
+      "type": "DEBIT",
+      "amount": "25.00",
+      "description": "Cash received"
+    },
+    {
+      "accountCode": "4000",
+      "type": "CREDIT",
+      "amount": "25.00",
+      "description": "Revenue recognized"
+    }
+  ]
+}
