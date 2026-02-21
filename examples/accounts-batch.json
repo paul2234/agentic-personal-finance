@@ -1,0 +1,24 @@
+{
+  "allowContraByDefault": false,
+  "accounts": [
+    {
+      "code": "1500",
+      "name": "Prepaid Expense",
+      "accountType": "ASSET",
+      "normalSide": "DEBIT"
+    },
+    {
+      "code": "5900",
+      "name": "Vacation Expense",
+      "accountType": "EXPENSE",
+      "normalSide": "DEBIT"
+    },
+    {
+      "code": "1590",
+      "name": "Accumulated Depreciation",
+      "accountType": "ASSET",
+      "normalSide": "CREDIT",
+      "allowContra": true
+    }
+  ]
+}

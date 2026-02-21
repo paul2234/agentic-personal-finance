@@ -22,6 +22,24 @@ Machine-readable:
 npm run dev -- accounts list --json
 ```
 
+Create a new account:
+
+```bash
+npm run dev -- accounts create --code 1500 --name "Prepaid Expense" --type ASSET --normal-side DEBIT
+```
+
+Create a contra account (explicit confirmation):
+
+```bash
+npm run dev -- accounts create --code 1590 --name "Accumulated Depreciation" --type ASSET --normal-side CREDIT --allow-contra
+```
+
+Create accounts from a JSON file:
+
+```bash
+npm run dev -- accounts create --from-file ./examples/accounts-batch.json --allow-contra
+```
+
 Post a journal entry from file:
 
 ```bash

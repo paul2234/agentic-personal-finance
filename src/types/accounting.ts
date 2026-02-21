@@ -2,6 +2,7 @@ export type AccountId = string & { readonly __brand: 'AccountId' };
 export type JournalEntryId = string & { readonly __brand: 'JournalEntryId' };
 
 export type EntryLineType = 'DEBIT' | 'CREDIT';
+export type AccountType = 'ASSET' | 'LIABILITY' | 'EQUITY' | 'REVENUE' | 'EXPENSE';
 
 export interface JournalLineInput {
   accountCode: string;
@@ -31,6 +32,43 @@ export interface AccountListItem {
   accountType: string;
   normalSide: 'DEBIT' | 'CREDIT';
   isActive: boolean;
+}
+
+export interface CreateAccountInput {
+  code: string;
+  name: string;
+  accountType: AccountType;
+  normalSide: 'DEBIT' | 'CREDIT';
+  allowContra?: boolean;
+  createdBy?: string;
+}
+
+export interface CreatedAccountResult {
+  id: string;
+  code: string;
+  name: string;
+  accountType: AccountType;
+  normalSide: 'DEBIT' | 'CREDIT';
+  isActive: boolean;
+}
+
+export interface CreateAccountsBatchInput {
+  createdBy?: string;
+  allowContraByDefault?: boolean;
+  accounts: CreateAccountInput[];
+}
+
+export interface CreateAccountsBatchResult {
+  attemptedCount: number;
+  createdCount: number;
+  duplicateCount: number;
+  contraRejectedCount: number;
+  created: CreatedAccountResult[];
+  errors: Array<{
+    code: string;
+    accountCode: string;
+    message: string;
+  }>;
 }
 
 export interface RawTransactionInput {

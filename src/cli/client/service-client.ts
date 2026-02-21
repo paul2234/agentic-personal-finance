@@ -1,4 +1,6 @@
 import type { AccountListItem } from '../../types/accounting';
+import type { CreateAccountsBatchInput, CreateAccountsBatchResult } from '../../types/accounting';
+import type { CreateAccountInput, CreatedAccountResult } from '../../types/accounting';
 import type { ImportRawTransactionsInput, ImportRawTransactionsResult } from '../../types/accounting';
 import type { PostJournalEntryInput, PostedJournalResult } from '../../types/accounting';
 import type { ApiResponse } from '../../types/api';
@@ -22,6 +24,28 @@ export class ServiceClient {
     });
 
     return this.unwrapApiResponse<AccountListItem[]>(response);
+  }
+
+  public async createAccount(input: CreateAccountInput): Promise<CreatedAccountResult> {
+    const response = await fetch(`${this.baseUrl}/create-account`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(input),
+    });
+
+    return this.unwrapApiResponse<CreatedAccountResult>(response);
+  }
+
+  public async createAccountsBatch(
+    input: CreateAccountsBatchInput,
+  ): Promise<CreateAccountsBatchResult> {
+    const response = await fetch(`${this.baseUrl}/create-accounts-batch`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(input),
+    });
+
+    return this.unwrapApiResponse<CreateAccountsBatchResult>(response);
   }
 
   public async postJournalEntry(input: PostJournalEntryInput): Promise<PostedJournalResult> {
