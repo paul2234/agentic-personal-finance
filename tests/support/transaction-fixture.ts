@@ -2,18 +2,18 @@ import { randomUUID } from 'node:crypto';
 
 import { getPool } from '../../src/db/client';
 
-export interface RawTransactionFixture {
+export interface TransactionFixture {
   id: string;
   accountId: string;
   accountCode: string;
   amount: string;
 }
 
-export async function createRawTransactionFixture(
+export async function createTransactionFixture(
   accountCode: string,
   amount: string,
   description?: string,
-): Promise<RawTransactionFixture> {
+): Promise<TransactionFixture> {
   const pool = getPool();
 
   const accountResult = await pool.query<{ id: string }>(
@@ -49,7 +49,7 @@ export async function createRawTransactionFixture(
     [
       'test-fixture',
       `fixture-${randomUUID()}`,
-      description ?? 'fixture raw transaction',
+      description ?? 'fixture transaction',
       amount,
       accountId,
     ],
@@ -63,7 +63,7 @@ export async function createRawTransactionFixture(
   };
 }
 
-export async function getRawTransactionState(rawTransactionId: string): Promise<{
+export async function getTransactionReconciliationState(transactionId: string): Promise<{
   allocatedAmount: string;
   reconciliationStatus: string;
 }> {
@@ -78,12 +78,12 @@ export async function getRawTransactionState(rawTransactionId: string): Promise<
       WHERE id = $1
       LIMIT 1
     `,
-    [rawTransactionId],
+    [transactionId],
   );
 
   const row = result.rows[0];
   if (!row) {
-    throw new Error(`Raw transaction not found: ${rawTransactionId}`);
+    throw new Error(`Transaction not found: ${transactionId}`);
   }
 
   return {

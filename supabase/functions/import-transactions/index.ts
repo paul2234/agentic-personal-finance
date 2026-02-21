@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-interface RawTransactionInput {
+interface ImportedTransactionInput {
   externalId: string;
   occurredAt: string;
   description?: string;
@@ -9,12 +9,12 @@ interface RawTransactionInput {
   metadata?: Record<string, unknown>;
 }
 
-interface ImportPayload {
+interface ImportTransactionsPayload {
   source: string;
   accountCode: string;
   fileName?: string;
   createdBy?: string;
-  transactions: RawTransactionInput[];
+  transactions: ImportedTransactionInput[];
 }
 
 interface AccountRow {
@@ -74,12 +74,12 @@ function isValidAmount(value: string): boolean {
   return /^-?\d+(\.\d{1,4})?$/.test(value);
 }
 
-function parsePayload(raw: unknown): ImportPayload | null {
-  if (!raw || typeof raw !== 'object') {
+function parsePayload(input: unknown): ImportTransactionsPayload | null {
+  if (!input || typeof input !== 'object') {
     return null;
   }
 
-  const payload = raw as Partial<ImportPayload>;
+  const payload = input as Partial<ImportTransactionsPayload>;
   if (!payload.source || typeof payload.source !== 'string') {
     return null;
   }
@@ -102,7 +102,7 @@ function parsePayload(raw: unknown): ImportPayload | null {
     }
   }
 
-  return payload as ImportPayload;
+  return payload as ImportTransactionsPayload;
 }
 
 Deno.serve(async (request: Request): Promise<Response> => {
@@ -114,16 +114,16 @@ Deno.serve(async (request: Request): Promise<Response> => {
     return errorResponse(401, 'UNAUTHORIZED', 'Missing or invalid bearer token');
   }
 
-  let rawPayload: unknown;
+  let inputPayload: unknown;
   try {
-    rawPayload = await request.json();
+    inputPayload = await request.json();
   } catch {
     return errorResponse(400, 'VALIDATION_ERROR', 'Request body must be valid JSON.');
   }
 
-  const payload = parsePayload(rawPayload);
+  const payload = parsePayload(inputPayload);
   if (!payload) {
-    return errorResponse(400, 'VALIDATION_ERROR', 'Invalid raw transaction import payload.');
+    return errorResponse(400, 'VALIDATION_ERROR', 'Invalid transaction import payload.');
   }
 
   try {

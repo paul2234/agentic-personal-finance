@@ -8,25 +8,25 @@ loadDotEnv();
 const hasDatabase: boolean = Boolean(process.env.DATABASE_URL);
 const runEdgeIntegration: boolean = process.env.RUN_EDGE_E2E === '1';
 const shouldRunIntegration: boolean = hasDatabase && runEdgeIntegration;
-const importRawTransactionsUrl = 'http://127.0.0.1:54321/functions/v1/import-raw-transactions';
+const importTransactionsUrl = 'http://127.0.0.1:54321/functions/v1/import-transactions';
 
-describe('Import raw transactions integration', () => {
+describe('Import transactions integration', () => {
   beforeAll(async () => {
     if (!shouldRunIntegration) {
       return;
     }
 
-    const reachable = await waitForEndpointReachable(importRawTransactionsUrl);
+    const reachable = await waitForEndpointReachable(importTransactionsUrl);
     if (!reachable) {
       throw new Error(
-        'import-raw-transactions is not reachable. Run `supabase start` and `npm run service:dev`.',
+        'import-transactions is not reachable. Run `supabase start` and `npm run service:dev`.',
       );
     }
   });
 
-  it.skipIf(!shouldRunIntegration)('imports valid raw transactions', async () => {
+  it.skipIf(!shouldRunIntegration)('imports valid transactions', async () => {
     const suffix = Date.now().toString();
-    const response = await fetch(importRawTransactionsUrl, {
+    const response = await fetch(importTransactionsUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

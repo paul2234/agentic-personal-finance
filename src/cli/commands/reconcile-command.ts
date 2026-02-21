@@ -16,7 +16,7 @@ export function createReconcileCommand(): Command {
 
   command
     .command('post')
-    .description('Reconcile raw transactions by posting a balanced journal from a JSON file')
+    .description('Reconcile imported transactions by posting a balanced journal from a JSON file')
     .requiredOption('-f, --file <path>', 'Path to reconciliation JSON file')
     .option('--json', 'Output as machine-readable JSON')
     .action(async (options: ReconcilePostOptions): Promise<void> => {

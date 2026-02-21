@@ -3,7 +3,7 @@ import { z } from 'zod';
 const amountRegex = /^\d+(\.\d{1,4})?$/;
 
 const reconciliationAllocationSchema = z.object({
-  rawTransactionId: z.string().uuid(),
+  transactionId: z.string().uuid(),
   amountApplied: z.string().regex(amountRegex, 'amountApplied must be a positive decimal string'),
 });
 
@@ -20,7 +20,7 @@ export const reconcileTransactionsSchema = z.object({
   sourceType: z.string().max(100).optional(),
   sourceRef: z.string().max(200).optional(),
   createdBy: z.string().uuid().optional(),
-  rawTransactionAllocations: z.array(reconciliationAllocationSchema).min(1),
+  transactionAllocations: z.array(reconciliationAllocationSchema).min(1),
   journalLines: z.array(reconcileJournalLineSchema).min(2),
 });
 

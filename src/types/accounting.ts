@@ -71,8 +71,8 @@ export interface CreateAccountsBatchResult {
   }>;
 }
 
-export interface ReconcileRawTransactionAllocationInput {
-  rawTransactionId: string;
+export interface ReconcileTransactionAllocationInput {
+  transactionId: string;
   amountApplied: string;
 }
 
@@ -89,7 +89,7 @@ export interface ReconcileTransactionsInput {
   sourceType?: string;
   sourceRef?: string;
   createdBy?: string;
-  rawTransactionAllocations: ReconcileRawTransactionAllocationInput[];
+  transactionAllocations: ReconcileTransactionAllocationInput[];
   journalLines: ReconcileJournalLineInput[];
 }
 
@@ -97,10 +97,10 @@ export interface ReconcileTransactionsResult {
   journalEntryId: string;
   journalNumber: string;
   allocationCount: number;
-  reconciledRawTransactionIds: string[];
+  reconciledTransactionIds: string[];
 }
 
-export interface RawTransactionInput {
+export interface ImportedTransactionInput {
   externalId: string;
   occurredAt: string;
   description?: string;
@@ -109,15 +109,15 @@ export interface RawTransactionInput {
   metadata?: Record<string, unknown>;
 }
 
-export interface ImportRawTransactionsInput {
+export interface ImportTransactionsInput {
   source: string;
   accountCode: string;
   fileName?: string;
   createdBy?: string;
-  transactions: RawTransactionInput[];
+  transactions: ImportedTransactionInput[];
 }
 
-export interface ImportRawTransactionsResult {
+export interface ImportTransactionsResult {
   importBatchId: string;
   accountId: string;
   attemptedCount: number;

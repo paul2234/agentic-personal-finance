@@ -9,7 +9,7 @@ Provide a step-by-step implementation path for transaction reconciliation in a C
 - Canonical sign rule: `raw_transactions.amount` uses account perspective.
   - Positive means the imported account balance increases.
   - Negative means the imported account balance decreases.
-- Reconciliation is modeled as posting balanced journal entries plus explicit allocations from raw transactions.
+- Reconciliation is modeled as posting balanced journal entries plus explicit allocations from imported transactions.
 - API/service contracts are finalized before schema and code changes.
 
 ## Phase 1 - Contracts and Scope
@@ -20,9 +20,9 @@ Provide a step-by-step implementation path for transaction reconciliation in a C
    - error codes
    - payload examples (single transaction, split transaction, multi-raw)
 2. Confirm MVP scope:
-   - single raw transaction reconciliation with split lines
+   - single transaction reconciliation with split lines
 3. Confirm follow-up scope:
-   - multi-raw reconciliation in one journal
+   - multi-transaction reconciliation in one journal
 
 ## Phase 2 - Import Normalization Baseline
 
@@ -49,7 +49,7 @@ Provide a step-by-step implementation path for transaction reconciliation in a C
 ## Phase 4 - Core Reconciliation Service Logic
 
 1. Validate reconciliation request:
-   - referenced raw transactions exist
+   - referenced transactions exist
    - selected balancing accounts exist and are active
 2. Validate balancing:
    - journal lines satisfy debit equals credit
@@ -83,7 +83,7 @@ Provide a step-by-step implementation path for transaction reconciliation in a C
    - show reconciliation details for one raw transaction
 2. CLI commands:
    - `reconcile list-unmatched`
-   - `reconcile show --raw-transaction-id <id>`
+   - `reconcile show --transaction-id <id>`
 
 ## Phase 8 - Test Strategy
 

@@ -4,31 +4,31 @@ import { Command } from 'commander';
 
 import { ServiceClient } from '../client/service-client';
 import { printData, printError } from '../output/format';
-import { importRawTransactionsSchema } from '../schemas/import-raw-transactions-schema';
+import { importTransactionsSchema } from '../schemas/import-transactions-schema';
 
-interface ImportRawOptions {
+interface ImportTransactionsOptions {
   file: string;
   json?: boolean;
 }
 
-export function createRawCommand(): Command {
-  const command = new Command('raw');
+export function createTransactionsCommand(): Command {
+  const command = new Command('transactions');
 
   command
     .command('import')
-    .description('Import raw bank/credit-card transactions from a JSON file')
-    .requiredOption('-f, --file <path>', 'Path to raw transaction JSON file')
+    .description('Import bank/credit-card transactions from a JSON file')
+    .requiredOption('-f, --file <path>', 'Path to transaction JSON file')
     .option('--json', 'Output as machine-readable JSON')
-    .action(async (options: ImportRawOptions): Promise<void> => {
+    .action(async (options: ImportTransactionsOptions): Promise<void> => {
       const jsonOutput: boolean = Boolean(options.json);
 
       try {
         const fileContent: string = await readFile(options.file, 'utf8');
         const parsed: unknown = JSON.parse(fileContent);
-        const payload = importRawTransactionsSchema.parse(parsed);
+        const payload = importTransactionsSchema.parse(parsed);
 
         const serviceClient = new ServiceClient();
-        const result = await serviceClient.importRawTransactions(payload);
+        const result = await serviceClient.importTransactions(payload);
 
         printData(
           {

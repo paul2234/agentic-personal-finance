@@ -3,9 +3,9 @@
   "memo": "Reconcile mortgage payment split",
   "sourceType": "reconciliation",
   "sourceRef": "example-reconcile-001",
-  "rawTransactionAllocations": [
+  "transactionAllocations": [
     {
-      "rawTransactionId": "00000000-0000-0000-0000-000000000000",
+      "transactionId": "00000000-0000-0000-0000-000000000000",
       "amountApplied": "1500.00"
     }
   ],

@@ -1,7 +1,10 @@
 import { config as loadDotEnv } from 'dotenv';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { getRawTransactionState, createRawTransactionFixture } from '../../support/raw-transaction-fixture';
+import {
+  createTransactionFixture,
+  getTransactionReconciliationState,
+} from '../../support/transaction-fixture';
 import { waitForEndpointReachable } from '../../support/wait-for-endpoint';
 
 loadDotEnv();
@@ -45,20 +48,20 @@ describe('Reconcile transactions integration', () => {
   });
 
   it.skipIf(!shouldRunIntegration)('reconciles partially then fully and updates status', async () => {
-    const raw = await createRawTransactionFixture('1000', '-100.00', 'integration reconcile partial/full');
+    const transaction = await createTransactionFixture('1000', '-100.00', 'integration reconcile partial/full');
 
     const partialResponse = await fetch(reconcileUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Idempotency-Key': `reconcile-partial-${raw.id}`,
+        'Idempotency-Key': `reconcile-partial-${transaction.id}`,
       },
       body: JSON.stringify({
         entryDate: '2026-02-22',
         memo: 'partial reconcile',
-        rawTransactionAllocations: [
+        transactionAllocations: [
           {
-            rawTransactionId: raw.id,
+            transactionId: transaction.id,
             amountApplied: '70.00',
           },
         ],
@@ -77,7 +80,7 @@ describe('Reconcile transactions integration', () => {
     expect(partialResponse.status).toBe(200);
     expect(partialPayload.success).toBe(true);
 
-    const partialState = await getRawTransactionState(raw.id);
+    const partialState = await getTransactionReconciliationState(transaction.id);
     expect(partialState.allocatedAmount).toBe('70.0000');
     expect(partialState.reconciliationStatus).toBe('PARTIALLY_RECONCILED');
 
@@ -85,14 +88,14 @@ describe('Reconcile transactions integration', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Idempotency-Key': `reconcile-final-${raw.id}`,
+        'Idempotency-Key': `reconcile-final-${transaction.id}`,
       },
       body: JSON.stringify({
         entryDate: '2026-02-22',
         memo: 'final reconcile',
-        rawTransactionAllocations: [
+        transactionAllocations: [
           {
-            rawTransactionId: raw.id,
+            transactionId: transaction.id,
             amountApplied: '30.00',
           },
         ],
@@ -111,26 +114,26 @@ describe('Reconcile transactions integration', () => {
     expect(finalResponse.status).toBe(200);
     expect(finalPayload.success).toBe(true);
 
-    const finalState = await getRawTransactionState(raw.id);
+    const finalState = await getTransactionReconciliationState(transaction.id);
     expect(finalState.allocatedAmount).toBe('100.0000');
     expect(finalState.reconciliationStatus).toBe('FULLY_RECONCILED');
   });
 
   it.skipIf(!shouldRunIntegration)('rejects over-allocation', async () => {
-    const raw = await createRawTransactionFixture('1000', '-50.00', 'integration reconcile over allocation');
+    const transaction = await createTransactionFixture('1000', '-50.00', 'integration reconcile over allocation');
 
     const response = await fetch(reconcileUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Idempotency-Key': `reconcile-over-${raw.id}`,
+        'Idempotency-Key': `reconcile-over-${transaction.id}`,
       },
       body: JSON.stringify({
         entryDate: '2026-02-22',
         memo: 'over allocate',
-        rawTransactionAllocations: [
+        transactionAllocations: [
           {
-            rawTransactionId: raw.id,
+            transactionId: transaction.id,
             amountApplied: '51.00',
           },
         ],
@@ -152,20 +155,20 @@ describe('Reconcile transactions integration', () => {
   });
 
   it.skipIf(!shouldRunIntegration)('rejects unbalanced journal lines', async () => {
-    const raw = await createRawTransactionFixture('1000', '-60.00', 'integration reconcile unbalanced');
+    const transaction = await createTransactionFixture('1000', '-60.00', 'integration reconcile unbalanced');
 
     const response = await fetch(reconcileUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Idempotency-Key': `reconcile-unbalanced-${raw.id}`,
+        'Idempotency-Key': `reconcile-unbalanced-${transaction.id}`,
       },
       body: JSON.stringify({
         entryDate: '2026-02-22',
         memo: 'unbalanced',
-        rawTransactionAllocations: [
+        transactionAllocations: [
           {
-            rawTransactionId: raw.id,
+            transactionId: transaction.id,
             amountApplied: '60.00',
           },
         ],

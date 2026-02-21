@@ -11,7 +11,7 @@ const projectRoot: string = process.cwd();
 const hasDatabase: boolean = Boolean(process.env.DATABASE_URL);
 const runEdgeE2E: boolean = process.env.RUN_EDGE_E2E === '1';
 const shouldRunE2E: boolean = hasDatabase && runEdgeE2E;
-const importRawTransactionsUrl = 'http://127.0.0.1:54321/functions/v1/import-raw-transactions';
+const importTransactionsUrl = 'http://127.0.0.1:54321/functions/v1/import-transactions';
 
 function runCliCommand(args: string[]): Promise<{ code: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve) => {
@@ -41,26 +41,26 @@ function runCliCommand(args: string[]): Promise<{ code: number | null; stdout: s
   });
 }
 
-describe('Raw import E2E', () => {
+describe('Transaction import E2E', () => {
   beforeAll(async () => {
     if (!shouldRunE2E) {
       return;
     }
 
-    const reachable = await waitForEndpointReachable(importRawTransactionsUrl);
+    const reachable = await waitForEndpointReachable(importTransactionsUrl);
     if (!reachable) {
       throw new Error(
-        'import-raw-transactions is not reachable. Run `supabase start` and `npm run service:dev`.',
+        'import-transactions is not reachable. Run `supabase start` and `npm run service:dev`.',
       );
     }
   });
 
-  it.skipIf(!shouldRunE2E)('imports sample raw transactions through CLI', async () => {
+  it.skipIf(!shouldRunE2E)('imports sample transactions through CLI', async () => {
     const result = await runCliCommand([
-      'raw',
+      'transactions',
       'import',
       '--file',
-      './examples/raw-transactions.json',
+      './examples/transactions-import.json',
       '--json',
     ]);
 

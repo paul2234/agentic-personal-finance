@@ -46,10 +46,10 @@ Post a journal entry from file:
 npm run dev -- ledger post-entry --file ./examples/journal-entry.json
 ```
 
-Import raw transactions from file:
+Import transactions from file:
 
 ```bash
-npm run dev -- raw import --file ./examples/raw-transactions.json
+npm run dev -- transactions import --file ./examples/transactions-import.json
 ```
 
 Post a reconciliation payload from file:
@@ -71,7 +71,7 @@ npm run dev -- reconcile post --file ./examples/reconcile-transaction.json --jso
 }
 ```
 
-## Example Raw Transaction Payload
+## Example Transaction Import Payload
 
 ```json
 {

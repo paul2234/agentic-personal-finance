@@ -6,9 +6,9 @@ describe('reconcileTransactionsSchema', () => {
   it('accepts valid reconciliation payload', () => {
     const parsed = reconcileTransactionsSchema.parse({
       entryDate: '2026-02-22',
-      rawTransactionAllocations: [
+      transactionAllocations: [
         {
-          rawTransactionId: 'c5d32db2-f3f4-4319-9a52-2918ca2a4fbb',
+          transactionId: 'c5d32db2-f3f4-4319-9a52-2918ca2a4fbb',
           amountApplied: '1500.00',
         },
       ],
@@ -19,7 +19,7 @@ describe('reconcileTransactionsSchema', () => {
       ],
     });
 
-    expect(parsed.rawTransactionAllocations.length).toBe(1);
+    expect(parsed.transactionAllocations.length).toBe(1);
     expect(parsed.journalLines.length).toBe(3);
   });
 
@@ -27,9 +27,9 @@ describe('reconcileTransactionsSchema', () => {
     expect(() =>
       reconcileTransactionsSchema.parse({
         entryDate: '2026-02-22',
-        rawTransactionAllocations: [
+        transactionAllocations: [
           {
-            rawTransactionId: 'c5d32db2-f3f4-4319-9a52-2918ca2a4fbb',
+            transactionId: 'c5d32db2-f3f4-4319-9a52-2918ca2a4fbb',
             amountApplied: '-1500.00',
           },
         ],

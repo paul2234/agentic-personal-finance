@@ -6,8 +6,8 @@ interface ReconcilePayload {
   sourceType?: string;
   sourceRef?: string;
   createdBy?: string;
-  rawTransactionAllocations: Array<{
-    rawTransactionId: string;
+  transactionAllocations: Array<{
+    transactionId: string;
     amountApplied: string;
   }>;
   journalLines: Array<{
@@ -72,7 +72,7 @@ function parsePayload(raw: unknown): ReconcilePayload | null {
     return null;
   }
 
-  if (!Array.isArray(payload.rawTransactionAllocations) || payload.rawTransactionAllocations.length === 0) {
+  if (!Array.isArray(payload.transactionAllocations) || payload.transactionAllocations.length === 0) {
     return null;
   }
 
@@ -102,7 +102,11 @@ function statusForCode(code: string): number {
     return 400;
   }
 
-  if (code === 'RAW_TRANSACTION_NOT_FOUND' || code === 'ALREADY_FULLY_RECONCILED') {
+  if (
+    code === 'RAW_TRANSACTION_NOT_FOUND'
+    || code === 'TRANSACTION_NOT_FOUND'
+    || code === 'ALREADY_FULLY_RECONCILED'
+  ) {
     return 404;
   }
 
@@ -141,6 +145,10 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
   try {
     const supabase = getServiceClient();
+    const rpcAllocations = payload.transactionAllocations.map((allocation) => ({
+      rawTransactionId: allocation.transactionId,
+      amountApplied: allocation.amountApplied,
+    }));
     const rpcResult = await supabase.rpc('reconcile_transactions', {
       p_entry_date: payload.entryDate,
       p_memo: payload.memo ?? null,
@@ -148,18 +156,33 @@ Deno.serve(async (request: Request): Promise<Response> => {
       p_source_ref: payload.sourceRef ?? idempotencyKey,
       p_created_by: payload.createdBy ?? null,
       p_journal_lines: payload.journalLines,
-      p_raw_allocations: payload.rawTransactionAllocations,
+      p_raw_allocations: rpcAllocations,
     });
 
     if (rpcResult.error) {
       const parsed = parseRpcError(rpcResult.error.message);
-      return errorResponse(statusForCode(parsed.code), parsed.code, parsed.message);
+      const normalizedCode = parsed.code === 'RAW_TRANSACTION_NOT_FOUND'
+        ? 'TRANSACTION_NOT_FOUND'
+        : parsed.code;
+      return errorResponse(statusForCode(normalizedCode), normalizedCode, parsed.message);
     }
+
+    const data = (rpcResult.data ?? {}) as {
+      journalEntryId?: string;
+      journalNumber?: string;
+      allocationCount?: number;
+      reconciledRawTransactionIds?: string[];
+    };
 
     return new Response(
       JSON.stringify({
         success: true,
-        data: rpcResult.data,
+        data: {
+          journalEntryId: data.journalEntryId,
+          journalNumber: data.journalNumber,
+          allocationCount: data.allocationCount,
+          reconciledTransactionIds: data.reconciledRawTransactionIds ?? [],
+        },
       }),
       { status: 200, headers: JSON_HEADERS },
     );

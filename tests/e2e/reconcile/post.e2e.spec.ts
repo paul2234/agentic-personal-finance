@@ -5,7 +5,7 @@ import { rm, writeFile } from 'node:fs/promises';
 import { config as loadDotEnv } from 'dotenv';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { createRawTransactionFixture } from '../../support/raw-transaction-fixture';
+import { createTransactionFixture } from '../../support/transaction-fixture';
 import { waitForEndpointReachable } from '../../support/wait-for-endpoint';
 
 loadDotEnv();
@@ -72,14 +72,14 @@ describe('Reconcile post E2E', () => {
   });
 
   it.skipIf(!shouldRunE2E)('posts reconciliation from CLI and returns journal identifiers', async () => {
-    const raw = await createRawTransactionFixture('1000', '-42.00', 'e2e reconcile success');
+    const transaction = await createTransactionFixture('1000', '-42.00', 'e2e reconcile success');
 
     const filePath = await writeTempReconcilePayload({
       entryDate: '2026-02-22',
       memo: 'e2e reconciliation success',
-      rawTransactionAllocations: [
+      transactionAllocations: [
         {
-          rawTransactionId: raw.id,
+          transactionId: transaction.id,
           amountApplied: '42.00',
         },
       ],
@@ -111,15 +111,15 @@ describe('Reconcile post E2E', () => {
     expect(payload.data?.allocationCount).toBe(1);
   });
 
-  it.skipIf(!shouldRunE2E)('fails when attempting to over-allocate raw transaction', async () => {
-    const raw = await createRawTransactionFixture('1000', '-25.00', 'e2e reconcile over allocation');
+  it.skipIf(!shouldRunE2E)('fails when attempting to over-allocate transaction', async () => {
+    const transaction = await createTransactionFixture('1000', '-25.00', 'e2e reconcile over allocation');
 
     const filePath = await writeTempReconcilePayload({
       entryDate: '2026-02-22',
       memo: 'e2e reconciliation over allocation',
-      rawTransactionAllocations: [
+      transactionAllocations: [
         {
-          rawTransactionId: raw.id,
+          transactionId: transaction.id,
           amountApplied: '30.00',
         },
       ],

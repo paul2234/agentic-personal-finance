@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { importRawTransactionsSchema } from '../../../../src/cli/schemas/import-raw-transactions-schema';
+import { importTransactionsSchema } from '../../../../src/cli/schemas/import-transactions-schema';
 
-describe('importRawTransactionsSchema', () => {
-  it('accepts a valid raw transaction import payload', () => {
-    const parsed = importRawTransactionsSchema.parse({
+describe('importTransactionsSchema', () => {
+  it('accepts a valid transaction import payload', () => {
+    const parsed = importTransactionsSchema.parse({
       source: 'bank-csv',
       accountCode: '1000',
       transactions: [
@@ -23,7 +23,7 @@ describe('importRawTransactionsSchema', () => {
 
   it('rejects invalid amount format', () => {
     expect(() =>
-      importRawTransactionsSchema.parse({
+      importTransactionsSchema.parse({
         source: 'bank-csv',
         accountCode: '1000',
         transactions: [

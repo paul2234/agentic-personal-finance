@@ -22,13 +22,13 @@ All reconciliation logic uses this canonical value.
 
 - `reconcile post --file <path> [--json]`
 - `reconcile list-unmatched [--account-code <code>] [--limit <n>] [--json]`
-- `reconcile show --raw-transaction-id <id> [--json]`
+- `reconcile show --transaction-id <id> [--json]`
 
 ## Edge Endpoints (V1)
 
 - `POST /reconcile-transactions`
-- `GET /list-unmatched-raw-transactions`
-- `GET /get-raw-transaction-reconciliation?rawTransactionId=<uuid>`
+- `GET /list-unmatched-transactions`
+- `GET /get-transaction-reconciliation?transactionId=<uuid>`
 
 ## Shared Response Envelope
 
@@ -72,9 +72,9 @@ Creates a journal and allocation records in one operation.
   "memo": "Reconcile checking outflow",
   "sourceType": "reconciliation",
   "sourceRef": "raw-import-2026-02",
-  "rawTransactionAllocations": [
+  "transactionAllocations": [
     {
-      "rawTransactionId": "c5d32db2-f3f4-4319-9a52-2918ca2a4fbb",
+      "transactionId": "c5d32db2-f3f4-4319-9a52-2918ca2a4fbb",
       "amountApplied": "1500.00"
     }
   ],
@@ -105,8 +105,8 @@ Creates a journal and allocation records in one operation.
 
 - `journalLines` must be balanced (total debit = total credit)
 - each `journalLines[].amount` must be positive; direction is encoded by `type` (`DEBIT`/`CREDIT`)
-- `rawTransactionAllocations` must have at least one row
-- each `rawTransactionAllocations[].amountApplied` must be positive (absolute magnitude)
+- `transactionAllocations` must have at least one row
+- each `transactionAllocations[].amountApplied` must be positive (absolute magnitude)
 - `amountApplied` cannot over-allocate any raw transaction
 - allocation invariant per raw transaction:
   - `sum(amountApplied) <= abs(raw_transactions.amount)`
@@ -124,14 +124,14 @@ Creates a journal and allocation records in one operation.
     "journalEntryId": "4f9929ee-5fb9-4ff8-86ac-af3f1af40f6e",
     "journalNumber": "JRN-20260222-6F724F18",
     "allocationCount": 1,
-    "reconciledRawTransactionIds": [
+    "reconciledTransactionIds": [
       "c5d32db2-f3f4-4319-9a52-2918ca2a4fbb"
     ]
   }
 }
 ```
 
-## GET /list-unmatched-raw-transactions
+## GET /list-unmatched-transactions
 
 Returns raw transactions that are not fully reconciled.
 
@@ -147,7 +147,7 @@ Returns raw transactions that are not fully reconciled.
   "success": true,
   "data": [
     {
-      "rawTransactionId": "c5d32db2-f3f4-4319-9a52-2918ca2a4fbb",
+      "transactionId": "c5d32db2-f3f4-4319-9a52-2918ca2a4fbb",
       "accountCode": "1000",
       "occurredAt": "2026-02-20T12:45:00Z",
       "amount": "-1500.00",
@@ -160,13 +160,13 @@ Returns raw transactions that are not fully reconciled.
 }
 ```
 
-## GET /get-raw-transaction-reconciliation
+## GET /get-transaction-reconciliation
 
 Returns reconciliation detail for one raw transaction.
 
 ### Query Params
 
-- `rawTransactionId` (required)
+- `transactionId` (required)
 
 ### Success Response
 
@@ -200,7 +200,7 @@ Returns reconciliation detail for one raw transaction.
 - `VALIDATION_ERROR`
 - `UNBALANCED_ENTRY`
 - `MISSING_ACCOUNT`
-- `RAW_TRANSACTION_NOT_FOUND`
+- `TRANSACTION_NOT_FOUND`
 - `OVER_ALLOCATED`
 - `ALREADY_FULLY_RECONCILED`
 - `IDEMPOTENCY_REQUIRED`

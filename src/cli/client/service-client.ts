@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import type { AccountListItem } from '../../types/accounting';
 import type { CreateAccountsBatchInput, CreateAccountsBatchResult } from '../../types/accounting';
 import type { CreateAccountInput, CreatedAccountResult } from '../../types/accounting';
-import type { ImportRawTransactionsInput, ImportRawTransactionsResult } from '../../types/accounting';
+import type { ImportTransactionsInput, ImportTransactionsResult } from '../../types/accounting';
 import type { PostJournalEntryInput, PostedJournalResult } from '../../types/accounting';
 import type { ReconcileTransactionsInput, ReconcileTransactionsResult } from '../../types/accounting';
 import type { ApiResponse } from '../../types/api';
@@ -61,16 +61,16 @@ export class ServiceClient {
     return this.unwrapApiResponse<PostedJournalResult>(response);
   }
 
-  public async importRawTransactions(
-    input: ImportRawTransactionsInput,
-  ): Promise<ImportRawTransactionsResult> {
-    const response = await fetch(`${this.baseUrl}/import-raw-transactions`, {
+  public async importTransactions(
+    input: ImportTransactionsInput,
+  ): Promise<ImportTransactionsResult> {
+    const response = await fetch(`${this.baseUrl}/import-transactions`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(input),
     });
 
-    return this.unwrapApiResponse<ImportRawTransactionsResult>(response);
+    return this.unwrapApiResponse<ImportTransactionsResult>(response);
   }
 
   public async reconcileTransactions(
