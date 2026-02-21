@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-import { validateBalanced } from '../../../src/api/post-journal-entry/validate-balanced.ts';
+import { validateBalanced } from './validate-balanced.ts';
 
 interface JournalLineInput {
   accountCode: string;

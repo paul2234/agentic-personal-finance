@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-import { mapAccountRow, type AccountRow } from '../../../src/api/get-accounts/map-account-row.ts';
+import { mapAccountRow, type AccountRow } from './map-account-row.ts';
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json',

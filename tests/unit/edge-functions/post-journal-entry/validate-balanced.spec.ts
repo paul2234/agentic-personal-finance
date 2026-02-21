@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateBalanced } from '../../../../src/api/post-journal-entry/validate-balanced';
+import { validateBalanced } from '../../../../supabase/functions/post-journal-entry/validate-balanced';
 
 describe('validateBalanced', () => {
   it('accepts balanced lines and returns totals', () => {

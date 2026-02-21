@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { mapAccountRow } from '../../../../src/api/get-accounts/map-account-row';
+import { mapAccountRow } from '../../../../supabase/functions/get-accounts/map-account-row';
 
 describe('mapAccountRow', () => {
   it('maps database account row to API shape', () => {

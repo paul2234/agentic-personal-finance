@@ -4,6 +4,12 @@
 
 A headless accounting engine with a dual-entry ledger, designed to run end-to-end from a CLI interface. Core architecture uses a relational database with fact and dimension tables.
 
+Primary runtime flow:
+
+- CLI -> Supabase Edge Functions -> Supabase Postgres database
+- Supabase Edge Functions are the only API layer for this project
+- Do not introduce or depend on a separate dedicated API server
+
 ## Build/Lint/Test Commands
 
 ```bash
@@ -50,13 +56,14 @@ npm run db:seed
 ```
 src/
   cli/              # CLI commands and command handlers
-  api/              # Optional REST API routes/controllers (non-primary interface)
   domain/           # Business logic and domain models
   ledger/           # Dual-entry ledger core
   db/               # Database layer (repositories, migrations)
   types/            # TypeScript type definitions
   utils/            # Shared utilities
   config/           # Configuration management
+supabase/
+  functions/        # Primary API surface (Edge Functions)
 tests/
   unit/             # Unit tests mirror src/ structure
   integration/      # API and database integration tests
@@ -225,7 +232,8 @@ created_by UUID REFERENCES users(id),
 
 ### API Design
 
-- Use REST conventions with versioned endpoints (`/api/v1/...`)
+- Edge Functions are the canonical API layer (not a dedicated app server)
+- Use REST-like conventions and versioned routes where applicable (for example, `/api/v1/...`)
 - Return consistent response envelopes
 - Use HTTP status codes correctly
 - Validate all inputs with Zod schemas
