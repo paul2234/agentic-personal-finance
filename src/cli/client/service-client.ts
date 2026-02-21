@@ -1,4 +1,5 @@
 import type { AccountListItem } from '../../types/accounting';
+import type { PostJournalEntryInput, PostedJournalResult } from '../../types/accounting';
 import type { ApiResponse } from '../../types/api';
 
 const DEFAULT_SERVICE_URL = 'http://127.0.0.1:54321/functions/v1';
@@ -19,12 +20,35 @@ export class ServiceClient {
       headers: this.getHeaders(),
     });
 
-    const payload = await this.readJsonResponse<ApiResponse<AccountListItem[]>>(response);
+    return this.unwrapApiResponse<AccountListItem[]>(response);
+  }
+
+  public async postJournalEntry(input: PostJournalEntryInput): Promise<PostedJournalResult> {
+    const response = await fetch(`${this.baseUrl}/post-journal-entry`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(input),
+    });
+
+    return this.unwrapApiResponse<PostedJournalResult>(response);
+  }
+
+  private async unwrapApiResponse<T>(response: Response): Promise<T> {
+    const payload = await this.readJsonResponse<unknown>(response);
+
+    if (!this.isApiResponse(payload)) {
+      if (!response.ok) {
+        throw new Error(`Service request failed with status ${response.status}.`);
+      }
+
+      throw new Error('Service response did not match expected envelope.');
+    }
+
     if (!payload.success) {
       throw new Error(payload.error.message);
     }
 
-    return payload.data;
+    return payload.data as T;
   }
 
   private async readJsonResponse<T>(response: Response): Promise<T> {
@@ -52,5 +76,14 @@ export class ServiceClient {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${this.bearerToken}`,
     };
+  }
+
+  private isApiResponse(payload: unknown): payload is ApiResponse<unknown> {
+    if (!payload || typeof payload !== 'object') {
+      return false;
+    }
+
+    const candidate = payload as Partial<ApiResponse<unknown>>;
+    return typeof candidate.success === 'boolean';
   }
 }

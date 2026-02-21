@@ -11,7 +11,7 @@ const projectRoot: string = process.cwd();
 const hasDatabase: boolean = Boolean(process.env.DATABASE_URL);
 const runEdgeE2E: boolean = process.env.RUN_EDGE_E2E === '1';
 const shouldRunE2E: boolean = hasDatabase && runEdgeE2E;
-const getAccountsUrl = 'http://127.0.0.1:54321/functions/v1/get-accounts';
+const postJournalEntryUrl = 'http://127.0.0.1:54321/functions/v1/post-journal-entry';
 
 function runCliCommand(args: string[]): Promise<{ code: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve) => {
@@ -41,31 +41,40 @@ function runCliCommand(args: string[]): Promise<{ code: number | null; stdout: s
   });
 }
 
-describe('Accounts list E2E', () => {
+describe('Ledger post-entry E2E', () => {
   beforeAll(async () => {
     if (!shouldRunE2E) {
       return;
     }
 
-    const reachable = await waitForEndpointReachable(getAccountsUrl);
+    const reachable = await waitForEndpointReachable(postJournalEntryUrl);
     if (!reachable) {
       throw new Error(
-        'Local edge function is not reachable. Start services with `supabase start` and `npm run service:dev`.',
+        'post-journal-entry is not reachable. Run `supabase start` and `npm run service:dev`.',
       );
     }
   });
 
-  it.skipIf(!shouldRunE2E)('returns accounts from CLI via edge function', async () => {
-    const result = await runCliCommand(['accounts', 'list', '--json']);
+  it.skipIf(!shouldRunE2E)('posts example journal through CLI and edge function', async () => {
+    const result = await runCliCommand([
+      'ledger',
+      'post-entry',
+      '--file',
+      './examples/journal-entry.json',
+      '--json',
+    ]);
 
     expect(result.code).toBe(0);
     expect(result.stderr).toBe('');
 
-    const payload: unknown = JSON.parse(result.stdout);
-    expect(Array.isArray(payload)).toBe(true);
+    const payload = JSON.parse(result.stdout) as {
+      success: boolean;
+      data?: { journalEntryId: string; journalNumber: string };
+      error?: { code: string; message: string };
+    };
 
-    const accounts = payload as Array<{ code: string; name: string }>;
-    expect(accounts.length).toBeGreaterThan(0);
-    expect(accounts.some((account) => account.code === '1000')).toBe(true);
+    expect(payload.success).toBe(true);
+    expect(payload.data?.journalEntryId).toEqual(expect.any(String));
+    expect(payload.data?.journalNumber).toMatch(/^JRN-/);
   });
 });

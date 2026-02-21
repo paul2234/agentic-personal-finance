@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 
 import { Command } from 'commander';
 
-import { LedgerService } from '../../ledger/post-journal-entry';
+import { ServiceClient } from '../client/service-client';
 import { printData, printError } from '../output/format';
 import { postEntrySchema } from '../schemas/post-entry-schema';
 
@@ -27,8 +27,8 @@ export function createLedgerCommand(): Command {
         const parsed: unknown = JSON.parse(fileContent);
         const payload = postEntrySchema.parse(parsed);
 
-        const ledgerService = new LedgerService();
-        const result = await ledgerService.postEntry(payload);
+        const serviceClient = new ServiceClient();
+        const result = await serviceClient.postJournalEntry(payload);
 
         printData(
           {
