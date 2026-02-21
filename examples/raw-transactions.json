@@ -1,0 +1,38 @@
+{
+  "source": "bank-csv",
+  "accountCode": "1000",
+  "fileName": "checking-2026-02.csv",
+  "transactions": [
+    {
+      "externalId": "txn-2026-02-001",
+      "occurredAt": "2026-02-18T15:11:00Z",
+      "description": "Payroll Deposit",
+      "amount": "2500.00",
+      "currencyCode": "USD",
+      "metadata": {
+        "category": "income",
+        "source": "employer"
+      }
+    },
+    {
+      "externalId": "txn-2026-02-002",
+      "occurredAt": "2026-02-19T01:22:00Z",
+      "description": "Grocery Store",
+      "amount": "-84.73",
+      "currencyCode": "USD",
+      "metadata": {
+        "category": "groceries"
+      }
+    },
+    {
+      "externalId": "txn-2026-02-003",
+      "occurredAt": "2026-02-19T17:48:00Z",
+      "description": "Electric Utility",
+      "amount": "-126.44",
+      "currencyCode": "USD",
+      "metadata": {
+        "category": "utilities"
+      }
+    }
+  ]
+}

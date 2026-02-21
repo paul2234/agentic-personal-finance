@@ -1,4 +1,5 @@
 import type { AccountListItem } from '../../types/accounting';
+import type { ImportRawTransactionsInput, ImportRawTransactionsResult } from '../../types/accounting';
 import type { PostJournalEntryInput, PostedJournalResult } from '../../types/accounting';
 import type { ApiResponse } from '../../types/api';
 
@@ -31,6 +32,18 @@ export class ServiceClient {
     });
 
     return this.unwrapApiResponse<PostedJournalResult>(response);
+  }
+
+  public async importRawTransactions(
+    input: ImportRawTransactionsInput,
+  ): Promise<ImportRawTransactionsResult> {
+    const response = await fetch(`${this.baseUrl}/import-raw-transactions`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(input),
+    });
+
+    return this.unwrapApiResponse<ImportRawTransactionsResult>(response);
   }
 
   private async unwrapApiResponse<T>(response: Response): Promise<T> {

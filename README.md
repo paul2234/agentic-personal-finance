@@ -28,6 +28,12 @@ Post a journal entry from file:
 npm run dev -- ledger post-entry --file ./examples/journal-entry.json
 ```
 
+Import raw transactions from file:
+
+```bash
+npm run dev -- raw import --file ./examples/raw-transactions.json
+```
+
 ## Example Journal Payload
 
 ```json
@@ -37,6 +43,25 @@ npm run dev -- ledger post-entry --file ./examples/journal-entry.json
   "lines": [
     { "accountCode": "1000", "type": "DEBIT", "amount": "100.00" },
     { "accountCode": "4000", "type": "CREDIT", "amount": "100.00" }
+  ]
+}
+```
+
+## Example Raw Transaction Payload
+
+```json
+{
+  "source": "bank-csv",
+  "accountCode": "1000",
+  "fileName": "checking-2026-02.csv",
+  "transactions": [
+    {
+      "externalId": "txn-2026-02-001",
+      "occurredAt": "2026-02-18T15:11:00Z",
+      "description": "Payroll Deposit",
+      "amount": "2500.00",
+      "currencyCode": "USD"
+    }
   ]
 }
 ```

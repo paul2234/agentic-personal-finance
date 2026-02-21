@@ -32,3 +32,28 @@ export interface AccountListItem {
   normalSide: 'DEBIT' | 'CREDIT';
   isActive: boolean;
 }
+
+export interface RawTransactionInput {
+  externalId: string;
+  occurredAt: string;
+  description?: string;
+  amount: string;
+  currencyCode: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ImportRawTransactionsInput {
+  source: string;
+  accountCode: string;
+  fileName?: string;
+  createdBy?: string;
+  transactions: RawTransactionInput[];
+}
+
+export interface ImportRawTransactionsResult {
+  importBatchId: string;
+  accountId: string;
+  attemptedCount: number;
+  insertedCount: number;
+  duplicateCount: number;
+}
