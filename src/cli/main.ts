@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { createAccountsCommand } from './commands/accounts-command';
 import { createLedgerCommand } from './commands/ledger-command';
 import { createRawCommand } from './commands/raw-command';
+import { createReconcileCommand } from './commands/reconcile-command';
 
 async function main(): Promise<void> {
   const program = new Command();
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
   program.addCommand(createLedgerCommand());
   program.addCommand(createAccountsCommand());
   program.addCommand(createRawCommand());
+  program.addCommand(createReconcileCommand());
 
   await program.parseAsync(process.argv);
 }

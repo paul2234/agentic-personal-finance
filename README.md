@@ -52,6 +52,12 @@ Import raw transactions from file:
 npm run dev -- raw import --file ./examples/raw-transactions.json
 ```
 
+Post a reconciliation payload from file:
+
+```bash
+npm run dev -- reconcile post --file ./examples/reconcile-transaction.json --json
+```
+
 ## Example Journal Payload
 
 ```json

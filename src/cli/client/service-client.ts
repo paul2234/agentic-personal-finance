@@ -1,8 +1,11 @@
+import { randomUUID } from 'node:crypto';
+
 import type { AccountListItem } from '../../types/accounting';
 import type { CreateAccountsBatchInput, CreateAccountsBatchResult } from '../../types/accounting';
 import type { CreateAccountInput, CreatedAccountResult } from '../../types/accounting';
 import type { ImportRawTransactionsInput, ImportRawTransactionsResult } from '../../types/accounting';
 import type { PostJournalEntryInput, PostedJournalResult } from '../../types/accounting';
+import type { ReconcileTransactionsInput, ReconcileTransactionsResult } from '../../types/accounting';
 import type { ApiResponse } from '../../types/api';
 
 const DEFAULT_SERVICE_URL = 'http://127.0.0.1:54321/functions/v1';
@@ -70,6 +73,22 @@ export class ServiceClient {
     return this.unwrapApiResponse<ImportRawTransactionsResult>(response);
   }
 
+  public async reconcileTransactions(
+    input: ReconcileTransactionsInput,
+    idempotencyKey?: string,
+  ): Promise<ReconcileTransactionsResult> {
+    const headers = this.getHeaders();
+    headers['Idempotency-Key'] = idempotencyKey ?? randomUUID();
+
+    const response = await fetch(`${this.baseUrl}/reconcile-transactions`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(input),
+    });
+
+    return this.unwrapApiResponse<ReconcileTransactionsResult>(response);
+  }
+
   private async unwrapApiResponse<T>(response: Response): Promise<T> {
     const payload = await this.readJsonResponse<unknown>(response);
 
@@ -102,7 +121,7 @@ export class ServiceClient {
     }
   }
 
-  private getHeaders(): HeadersInit {
+  private getHeaders(): Record<string, string> {
     if (!this.bearerToken) {
       return {
         'Content-Type': 'application/json',

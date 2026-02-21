@@ -71,6 +71,35 @@ export interface CreateAccountsBatchResult {
   }>;
 }
 
+export interface ReconcileRawTransactionAllocationInput {
+  rawTransactionId: string;
+  amountApplied: string;
+}
+
+export interface ReconcileJournalLineInput {
+  accountCode: string;
+  type: 'DEBIT' | 'CREDIT';
+  amount: string;
+  description?: string;
+}
+
+export interface ReconcileTransactionsInput {
+  entryDate: string;
+  memo?: string;
+  sourceType?: string;
+  sourceRef?: string;
+  createdBy?: string;
+  rawTransactionAllocations: ReconcileRawTransactionAllocationInput[];
+  journalLines: ReconcileJournalLineInput[];
+}
+
+export interface ReconcileTransactionsResult {
+  journalEntryId: string;
+  journalNumber: string;
+  allocationCount: number;
+  reconciledRawTransactionIds: string[];
+}
+
 export interface RawTransactionInput {
   externalId: string;
   occurredAt: string;

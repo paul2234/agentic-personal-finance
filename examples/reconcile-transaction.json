@@ -1,0 +1,32 @@
+{
+  "entryDate": "2026-02-22",
+  "memo": "Reconcile mortgage payment split",
+  "sourceType": "reconciliation",
+  "sourceRef": "example-reconcile-001",
+  "rawTransactionAllocations": [
+    {
+      "rawTransactionId": "00000000-0000-0000-0000-000000000000",
+      "amountApplied": "1500.00"
+    }
+  ],
+  "journalLines": [
+    {
+      "accountCode": "5200",
+      "type": "DEBIT",
+      "amount": "1200.00",
+      "description": "Mortgage interest"
+    },
+    {
+      "accountCode": "2100",
+      "type": "DEBIT",
+      "amount": "300.00",
+      "description": "Mortgage principal"
+    },
+    {
+      "accountCode": "1000",
+      "type": "CREDIT",
+      "amount": "1500.00",
+      "description": "Checking payment"
+    }
+  ]
+}
